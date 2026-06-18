@@ -1,0 +1,62 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+    ext {
+        kotlin_version = '2.2.0'
+        ksp_version = '2.2.0-2.0.2'
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.9.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+        classpath "com.google.devtools.ksp:symbol-processing-api:$ksp_version"
+        classpath "com.google.devtools.ksp:symbol-processing-gradle-plugin:$ksp_version"
+        classpath 'com.google.gms:google-services:4.4.1'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.9'
+    }
+}
+
+tasks.register('clean', Delete) {
+    delete getLayout().getBuildDirectory()
+}
+
+tasks.register('restoreWorkflows') {
+    doLast {
+        def workflowsDir = new File(".github/workflows")
+        if (!workflowsDir.exists()) {
+            workflowsDir.mkdirs()
+        }
+        def filesToRestore = [
+            'beta.yml',
+            'bug_greetings.yml',
+            'extension-issue-handling.yml',
+            'feature_greetings.yml',
+            'pr_greetings.yml'
+        ]
+        filesToRestore.each { fileName ->
+            def urlStr = "https://raw.githubusercontent.com/AsrOfficialDev/ReDantotsu/main/.github/workflows/${fileName}"
+            def fileUrl = new java.net.URL(urlStr)
+            def targetFile = new File(workflowsDir, fileName)
+            println "Downloading ${fileName}..."
+            try {
+                fileUrl.withInputStream { i -> targetFile.withOutputStream { it << i } }
+                println "Successfully restored ${fileName}"
+            } catch (Exception e) {
+                println "Failed to restore ${fileName}: ${e.message}"
+            }
+        }
+    }
+}
+
+
+tasks.withType(KotlinJvmCompile).configureEach {
+    compilerOptions {
+        freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+    }
+}

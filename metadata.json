@@ -1,0 +1,6 @@
+{
+  "name": "ReDantotsu",
+  "description": "ReDantotsu is a remake version of the original Dantotsu app, featuring a gorgeous Liquid Glass UI to track and stream your favorite anime and manga.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
